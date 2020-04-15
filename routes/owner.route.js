@@ -12,3 +12,4 @@ router.post("/:id", owner_controller.updateEmployee)
 router.get("/viewEmployees", owner_controller.viewEmployees)
 router.get("/viewOrders", owner_controller.viewOrders)
 router.get("/viewBills", owner_controller.viewBills)
+module.exports = router;
