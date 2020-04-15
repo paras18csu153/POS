@@ -9,3 +9,4 @@ router.post("/takeOrder", waiter_controller.takeOrder)
 router.post("/updateOrder", waiter_controller.updateOrder)
 router.post("/generateOTP", waiter_controller.generateOTP)
 router.post("/updateCustomerdetails", waiter_controller.updateCustomerdetails)
+module.exports = router;
