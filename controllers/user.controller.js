@@ -1,6 +1,3 @@
-exports.signup = async (req, res) => {
-    //Register the restaurant
-}
 exports.signin = async (req, res) => {
     //Sign in with existing account
 }
