@@ -1,0 +1,50 @@
+body {
+  padding-left: 5%;
+  padding-top: 0%;
+  font-size: 14px;
+  font-family: 'Open Sans', sans-serif;
+  background-image: url("background.jpg");
+  height: 100%;
+}
+
+.container,
+.myCarousel a {
+  color: #00B7FF;
+}
+
+#logo {
+  margin-left: 65%;
+}
+
+#ptag {
+  position: absolute;
+  margin-left: 62.5%;
+}
+
+#ptag a {
+  text-decoration: none;
+  color: blue;
+}
+
+#ptag a:hover {
+  color: #F9BE32;
+}
+input{
+  border: none;
+}
+button
+{
+    background-color: #BFD2E8;
+    color: black;
+    margin: auto;
+    padding: 5px; 
+    text-align: center;
+    margin-top: auto;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+button:hover{
+  background-color:#F9BE32 ;
+  transition: all 3s;
+}
