@@ -21,8 +21,8 @@ mongoose
     process.exit()
   })
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var indexRouter = require('./routes/index.route');
+var userRouter = require('./routes/user.route');
 var ownerRouter=require('./routes/owner.route');
 
 var app = express();
@@ -40,7 +40,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/user', userRouter);
 app.use('/owner', ownerRouter);
 
 // catch 404 and forward to error handler
