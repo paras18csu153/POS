@@ -1,0 +1,25 @@
+body{
+    background-image: url("/images/background1.png");
+    padding: 0%;
+    width:100%;
+    font-family: 'Open Sans', sans-serif;
+}
+button
+{
+    background-color: #BFD2E8;
+    color: black;
+    margin: auto;
+    padding: 5px; 
+    text-align: center;
+    margin-top: auto;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+input{
+    border: none;
+  }
+  button:hover{
+    background-color:#F9BE32 ;
+    transition: all 3s;
+  }
