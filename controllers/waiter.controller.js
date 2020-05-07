@@ -1,7 +1,6 @@
 const Order = require("../models/order.model");
 const Table = require("../models/table.model");
 const Dish = require("../models/dish.model");
-const Waiter =require("../models/waiter.model")
 const Bill =require("../models/bill.model")
 
 exports.viewTables = async (req, res) => {
@@ -30,10 +29,9 @@ exports.viewOrder = async (req, res) => {
 //   order = await order.save();
 //   res.status(200).send(order)
 // }
-
 exports.takeOrder = async (req, res) => {
   //Take order
-  waiterid=req.token.waiterid;
+ var waiterid=req.token.waiterid;
   var order=await Order.findOne({
     tablenumber:req.body.tablenumber,
     waiterid:waiterid
@@ -76,7 +74,6 @@ exports.generateBill = async (req, res) => {
     var bill= new Bill({
         waitid:waiterid,
         tabnumber:tablenumber,
-
     })
     await bill.save();
     res.status(200).send({orders});

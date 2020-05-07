@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 const mongoose = require("mongoose")
-var url = "mongodb+srv://Paras:Ps12111994@test-55ahv.mongodb.net/test?retryWrites=true&w=majority";
+var url = "mongodb+srv://Paras:password12345@test-55ahv.mongodb.net/test?retryWrites=true&w=majority";
 mongoose.Promise = global.Promise
 // Connecting to the database
 mongoose
