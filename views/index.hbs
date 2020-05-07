@@ -45,17 +45,50 @@
 <h3 id="pwd">Password</h3>
 <input id="password" type="password" placeholder="Password"
   style="padding: 5px;width:26%;border-radius:50px;padding-left:15px;">
+<p style="color: darkred;position:absolute" id="error"></p>
 <a onclick="login()">
   <div id="login" style="margin-top: 4%;position: absolute;">
     <h4>Login</h4>
   </div>
-  <div id="lowerhalf">
-    <img src="/images/Lower half.png" style="margin-top: 5%;width:60%;height:20%">
-  </div>
 </a>
-<h4 id="ptag" style="margin-top: 1%;">Restaurant not registered??<a href="#" id="redirect">Register now!!</a></h4>
+<div id="lowerhalf">
+  <img src="/images/Lower half.png" style="margin-top: 5%;width:60%;height:20%">
+</div>
+<h4 id="ptag" style="margin-top: 1%;">Restaurant not registered??<a href="signup" id="redirect">Register now!!</a></h4>
 <script>
   function login() {
-    console.log("hello");
+    var email = document.getElementById("username").value
+    var password = document.getElementById("password").value
+    var xmlHttpRequest = new XMLHttpRequest()
+    xmlHttpRequest.onreadystatechange = function () {
+      if (this.readyState === 4) {
+        if (this.status === 200) {
+          document.cookie = "authorization=" + this.getResponseHeader("authorization")
+          console.log("signin success")
+          var user=this.responseText;
+          user=JSON.parse(user);
+          if(user.verified===true){
+            if(user.type==="Owner"){
+                window.location = "Ownerdashboard"
+            }
+          else if(user.type==="Waiter"){
+            document.write("Waiter Dashboard");
+          }
+          else{
+            document.write("Cashier Dashboard")
+          }
+          }
+          else{
+            window.location="verificationPage"
+          }
+        }
+        else {
+          document.getElementById("error").innerText = JSON.parse(this.responseText).message
+        }
+      }
+    }
+    xmlHttpRequest.open("POST", "/user/signin", true)
+    xmlHttpRequest.setRequestHeader("Content-Type", "application/json")
+    xmlHttpRequest.send(JSON.stringify({ email: email, password: password }))
   }
 </script>

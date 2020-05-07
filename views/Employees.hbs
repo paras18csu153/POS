@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href='/stylesheets/ownerviewtables.css' />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+</head>
+
+<body onload="viewemployees()" spellcheck="false">
+    <table id="myTable" style="position:absolute;margin-left:21.5%;margin-top:8%;">
+        <tr>
+            <th style="width:14%;text-align:center">Employee Name</th>
+            <th style="width:14%;text-align:center">Email ID</th>
+            <th style="width:14%;text-align:center">Phone Number</th>
+            <th style="width:14%;text-align:center">AadharNumber</th>
+            <th style="width:14%;text-align:center;">Address</th>
+            <th style="width:10%;text-align:center">Type</th>
+        </tr>
+    </table>
+    <div
+        style="border-radius: 17px;height:100%;width:20%;background-image: url(/images/sidemenubg.png);position: fixed;">
+    </div>
+    <img style="position: fixed;margin-left: 6%;width:100px;height: 100px;margin-top: 8%;" src="/images/Profile.png">
+    <a href="Ownerdashboard"><img src="/images/Logo.png"
+            style="position: fixed;margin-top: 20px;margin-left: 20px;width: 75px;height: 75px;"></a>
+    <img src="/images/dashboardlogo.png" style="position: fixed;margin-top: 20%;margin-left: 2.5%;">
+    <h3 style="margin-top: 20%;margin-left: 6%;position: fixed;"><a style="text-decoration: none;color:black"
+            href="Ownerdashboard">Dashboard</a></h3>
+    <img src="/images/Menu.png" style="position: fixed;margin-top: 23%;margin-left: 2.75%;width: 1.5%;height: 5%;">
+    <h3 style="margin-top: 23.5%;margin-left: 6%;position: fixed;"><a style="text-decoration: none;color:black"
+            href="viewdishes">Menu</a></h3>
+    <img src="/images/tableicon.png" style="position: fixed;margin-top: 26.75%;margin-left: 2%;width: 2.8%;height: 5%;">
+    <h3 style="margin-top: 27%;margin-left: 6%;position: fixed;"><a style="text-decoration: none;color:black"
+            href="Tables">Tables</a></h3>
+    <img src="/images/Employee.png" style="position: fixed;margin-top: 30.5%;margin-left: 2%;width: 2.8%;height: 4%;">
+    <h3 style="margin-top: 30.5%;margin-left: 6%;position: fixed;"><a style="text-decoration: none;color:black"
+            href="Employees">Employees</a></h3>
+    <img src="/images/logouticon.png"
+        style="position: fixed;margin-top: 44.25%;margin-left: 3%;width: 1.5%;height: 2.5%;">
+    <h3 onclick="signout()" style="margin-top: 44%;margin-left: 6%;position: fixed;"><a
+            style="text-decoration: none;color:black">Sign out</a></h3>
+    <h1 style="margin-top:2.5%;margin-left: 55%;color: #0076FF;position: absolute;">Employees</h1>
+    <button style="margin-top: 42.5%;position:absolute;margin-left:70%" onclick="addemployee()">Add Employee</button>
+    <button style="margin-top: 42.5%;position:absolute;margin-left:81.5%" onclick="updateemployee()">Update</button>
+    <button style="margin-top: 42.5%;position:absolute;margin-left:90%" onclick="deleteemployee()">Delete</button>
+    <script>
+        function viewemployees() {
+            var xmlHttpRequest = new XMLHttpRequest()
+            xmlHttpRequest.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {
+                        employees = JSON.parse(this.responseText);
+                        console.log(employees);
+                        for (var i = 0; i < employees.employees.length; i++) {
+                            var table = document.getElementById("myTable");
+                            var row = table.insertRow(i+1);
+                            var cell0 = row.insertCell(0);
+                            var cell1 = row.insertCell(1);
+                            var cell2 = row.insertCell(2);
+                            var cell3 = row.insertCell(3);
+                            var cell4 = row.insertCell(4);
+                            var cell5 = row.insertCell(5);
+                            cell0.style.padding="5px"
+                            cell1.style.padding="5px"
+                            cell2.style.padding="5px"
+                            cell3.style.padding="5px"
+                            cell4.style.padding="5px"
+                            cell5.style.padding="5px"
+                            cell0.innerHTML = employees.employees[i].employeename;
+                            cell1.innerHTML = employees.employees[i].emailid;
+                            cell2.innerHTML = employees.employees[i].phonenumber;
+                            cell3.innerHTML = employees.employees[i].aadharnumber;
+                            cell4.innerHTML = employees.employees[i].address;
+                            cell5.innerHTML = employees.employees[i].type;
+                        }
+                    }
+                }
+                else {
+                    document.getElementById("error").innerText = JSON.parse(this.responseText).message
+                }
+            }
+            xmlHttpRequest.open("GET", "/owner/Employees", true)
+            xmlHttpRequest.setRequestHeader("Content-Type", "application/json")
+            xmlHttpRequest.setRequestHeader("authorization", document.cookie);
+            xmlHttpRequest.send()
+        }
+        function addemployee() {
+            window.location = "addemployee"
+        }
+        function updateemployee() {
+            window.location = "updateemployee"
+        }
+        function deleteemployee() {
+            window.location = "deleteemployee"
+        }
+        function signout() {
+            var xmlHttpRequest = new XMLHttpRequest()
+            xmlHttpRequest.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {
+                        console.log("signout success")
+                        document.cookie = ("authorization=; expires = Thu, 01 Jan 1970 00:00:00 GMT");
+                        window.location = "/"
+                    }
+                    else {
+                        document.getElementById("error").innerText = JSON.parse(this.responseText).message
+                    }
+                }
+            }
+            xmlHttpRequest.open("POST", "/user/signout", true)
+            xmlHttpRequest.setRequestHeader("Content-Type", "application/json")
+            xmlHttpRequest.setRequestHeader("authorization", document.cookie);
+            xmlHttpRequest.send();
+
+            function getCookie(cname) {
+                var name = cname + "=";
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var ca = decodedCookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+        }
+    </script>
+</body>
+
+</html>

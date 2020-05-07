@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href='/stylesheets/ownerviewtables.css' />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+</head>
+
+<body onload="viewdishes()">
+   <div
+        style="border-radius: 17px;height:100%;width:20%;background-image: url(/images/sidemenubg.png);position: fixed;">
+    </div>
+    <img style="position: fixed;margin-left: 6%;width:100px;height: 100px;margin-top: 8%;" src="/images/Profile.png">
+    <a href="Ownerdashboard"><img src="/images/Logo.png"
+            style="position: fixed;margin-top: 20px;margin-left: 20px;width: 75px;height: 75px;"></a>
+    <img src="/images/dashboardlogo.png" style="position: fixed;margin-top: 20%;margin-left: 2.5%;">
+    <h3 style="margin-top: 20%;margin-left: 6%;position: fixed;"><a style="text-decoration: none;color:black"
+            href="Ownerdashboard">Dashboard</a></h3>
+    <img src="/images/Menu.png" style="position: fixed;margin-top: 23%;margin-left: 2.75%;width: 1.5%;height: 5%;">
+    <h3 style="margin-top: 23.5%;margin-left: 6%;position: fixed;"><a style="text-decoration: none;color:black"
+            href="viewdishes">Menu</a></h3>
+    <img src="/images/tableicon.png" style="position: fixed;margin-top: 26.75%;margin-left: 2%;width: 2.8%;height: 5%;">
+    <h3 style="margin-top: 27%;margin-left: 6%;position: fixed;"><a style="text-decoration: none;color:black"
+            href="Tables">Tables</a></h3>
+    <img src="/images/Employee.png" style="position: fixed;margin-top: 30.5%;margin-left: 2%;width: 2.8%;height: 4%;">
+    <h3 style="margin-top: 30.5%;margin-left: 6%;position: fixed;"><a style="text-decoration: none;color:black"
+            href="Employees">Employees</a></h3>
+    <img src="/images/logouticon.png"
+        style="position: fixed;margin-top: 44.25%;margin-left: 3%;width: 1.5%;height: 2.5%;">
+    <h3 onclick="signout()" style="margin-top: 44%;margin-left: 6%;position: fixed;"><a
+            style="text-decoration: none;color:black">Sign out</a></h3>
+    <h1 style="margin-top:2.5%;margin-left: 55%;color: #0076FF;position: absolute;">Dishes</h1>
+    <button style="margin-top: 42.5%;position:absolute;margin-left:70%" onclick="adddish()">Add Dish</button>
+    <button style="margin-top: 42.5%;position:absolute;margin-left:80%" onclick="updatedish()">Update</button>
+    <button style="margin-top: 42.5%;position:absolute;margin-left:90%" onclick="deletedish()">Delete</button>
+    <script spellcheck="false">
+        function viewdishes() {
+            var xmlHttpRequest = new XMLHttpRequest()
+            xmlHttpRequest.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {
+                        var j = 8;
+                        console.log("dish view success")
+                        dishes = JSON.parse(this.responseText);
+                        console.log(dishes)
+                        console.log(dishes.dishes.length)
+                        for (var i = 0; i < dishes.dishes.length; i++) {
+                            if (i % 5 == 0) {
+                                var path = dishes.dishes[i].dishimage;
+                                var para = document.createElement("div");
+                                para.setAttribute("style", "background-color:#BFD2E8;margin-left:25%;position:absolute;border-radius:30px;height:200px;width:200px");
+                                para.style.marginTop = j + "%";
+                                para.setAttribute("id", i);
+                                para.onclick="update()";
+                                document.body.appendChild(para);
+                                var paras = document.createElement("img");
+                                paras.setAttribute("src", path);
+                                paras.setAttribute("style", "height:100px;width:150px;margin-left:12.5%;margin-top:5%");
+                                document.getElementById(i).appendChild(paras);
+                                var par = document.createElement("h5");
+                                par.innerHTML = dishes.dishes[i].dishname;
+                                par.setAttribute("style", "margin-left:15%;")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                if (dishes.dishes[i].veg == true) {
+                                    par.innerHTML = "Veg";
+                                }
+                                else {
+                                    par.innerHTML = "Non-Veg";
+                                }
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                par.innerHTML = dishes.dishes[i].category;
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                par.innerHTML ="₹"+ dishes.dishes[i].price;
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                            }
+                            else if (i % 5 == 1) {
+                                var path = dishes.dishes[i].dishimage;
+                                var para = document.createElement("div");
+                                para.setAttribute("style", "background-color:#BFD2E8;margin-left:40%;position:absolute;border-radius:30px;height:200px;width:200px");
+                                para.style.marginTop = j + "%";
+                                para.setAttribute("id", i);
+                                document.body.appendChild(para);
+                                var paras = document.createElement("img");
+                                paras.setAttribute("src", path);
+                                paras.setAttribute("style", "height:100px;width:150px;margin-left:12.5%;margin-top:5%");
+                                document.getElementById(i).appendChild(paras);
+                                var par = document.createElement("h5");
+                                par.innerHTML = dishes.dishes[i].dishname;
+                                par.setAttribute("style", "margin-left:15%;")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                if (dishes.dishes[i].veg == true) {
+                                    par.innerHTML = "Veg";
+                                }
+                                else {
+                                    par.innerHTML = "Non-Veg";
+                                }
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                par.innerHTML = dishes.dishes[i].category;
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                par.innerHTML ="₹"+  dishes.dishes[i].price;
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                            }
+                            else if (i % 5 == 2) {
+                                var path = dishes.dishes[i].dishimage;
+                                var para = document.createElement("div");
+                                para.setAttribute("style", "background-color:#BFD2E8;margin-left:55%;position:absolute;border-radius:30px;height:200px;width:200px");
+                                para.style.marginTop = j + "%";
+                                para.setAttribute("id", i);
+                                document.body.appendChild(para);
+                                var paras = document.createElement("img");
+                                paras.setAttribute("src", path);
+                                paras.setAttribute("style", "height:100px;width:150px;margin-left:12.5%;margin-top:5%");
+                                document.getElementById(i).appendChild(paras);
+                                var par = document.createElement("h5");
+                                par.innerHTML = dishes.dishes[i].dishname;
+                                par.setAttribute("style", "margin-left:15%;")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                if (dishes.dishes[i].veg == true) {
+                                    par.innerHTML = "Veg";
+                                }
+                                else {
+                                    par.innerHTML = "Non-Veg";
+                                }
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                par.innerHTML = dishes.dishes[i].category;
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                par.innerHTML ="₹"+  dishes.dishes[i].price;
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                            }
+                            else if (i % 5 == 3) {
+                                var path = dishes.dishes[i].dishimage;
+                                var para = document.createElement("div");
+                                para.setAttribute("style", "background-color:#BFD2E8;margin-left:70%%;position:absolute;border-radius:30px;height:200px;width:200px");
+                                para.style.marginTop = j + "%";
+                                para.setAttribute("id", i);
+                                document.body.appendChild(para);
+                                var paras = document.createElement("img");
+                                paras.setAttribute("src", path);
+                                paras.setAttribute("style", "height:100px;width:150px;margin-left:12.5%;margin-top:5%");
+                                document.getElementById(i).appendChild(paras);
+                                var par = document.createElement("h5");
+                                par.innerHTML = dishes.dishes[i].dishname;
+                                par.setAttribute("style", "margin-left:15%;")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                if (dishes.dishes[i].veg == true) {
+                                    par.innerHTML = "Veg";
+                                }
+                                else {
+                                    par.innerHTML = "Non-Veg";
+                                }
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                par.innerHTML = dishes.dishes[i].category;
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                par.innerHTML ="₹"+  dishes.dishes[i].price;
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                            }
+                            else {
+                                var path = dishes.dishes[i].dishimage;
+                                var para = document.createElement("div");
+                                para.setAttribute("style", "background-color:#BFD2E8;margin-left:85%;position:absolute;border-radius:30px;height:200px;width:200px");
+                                para.style.marginTop = j + "%";
+                                para.setAttribute("id", i);
+                                document.body.appendChild(para);
+                                var paras = document.createElement("img");
+                                paras.setAttribute("src", path);
+                                paras.setAttribute("style", "height:100px;width:150px;margin-left:12.5%;margin-top:5%");
+                                document.getElementById(i).appendChild(paras);
+                                var par = document.createElement("h5");
+                                par.innerHTML = dishes.dishes[i].dishname;
+                                par.setAttribute("style", "margin-left:15%;")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                if (dishes.dishes[i].veg == true) {
+                                    par.innerHTML = "Veg";
+                                }
+                                else {
+                                    par.innerHTML = "Non-Veg";
+                                }
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                par.innerHTML = dishes.dishes[i].category;
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                var par = document.createElement("h6");
+                                par.innerHTML ="₹"+  dishes.dishes[i].price;
+                                par.setAttribute("style", "margin-left:15%;margin-top:-2.5%")
+                                document.getElementById(i).appendChild(par);
+                                j = j + 15
+                            }
+                        }
+                    }
+                    else {
+                        document.getElementById("error").innerText = JSON.parse(this.responseText).message
+                    }
+                }
+            }
+            xmlHttpRequest.open("GET", "/owner/Dishes", true)
+            xmlHttpRequest.setRequestHeader("Content-Type", "application/json")
+            xmlHttpRequest.setRequestHeader("authorization", document.cookie);
+            xmlHttpRequest.send()
+        }
+        function adddish() {
+            window.location = "adddish"
+        }
+        function updatedish() {
+            window.location = "updatedish"
+        }
+        function deletedish() {
+            window.location = "deletedish"
+        }
+        function signout() {
+            var xmlHttpRequest = new XMLHttpRequest()
+            xmlHttpRequest.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {
+                        console.log("signout success")
+                        document.cookie = ("authorization=; expires = Thu, 01 Jan 1970 00:00:00 GMT");
+                        window.location = "/"
+                    }
+                    else {
+                        document.getElementById("error").innerText = JSON.parse(this.responseText).message
+                    }
+                }
+            }
+            xmlHttpRequest.open("POST", "/user/signout", true)
+            xmlHttpRequest.setRequestHeader("Content-Type", "application/json")
+            xmlHttpRequest.setRequestHeader("authorization", document.cookie);
+            xmlHttpRequest.send();
+
+            function getCookie(cname) {
+                var name = cname + "=";
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var ca = decodedCookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+        }
+    </script>
+</body>
+
+</html>
