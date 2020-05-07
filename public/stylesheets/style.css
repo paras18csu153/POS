@@ -1,8 +1,59 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding-left: 5%;
+  padding-top: 0%;
+  font-size: 14px ;
+  font-family: 'Open Sans', sans-serif;
+  background-image: url("../images/background.jpg");  
+  height:100%;
 }
-
-a {
+.container,.myCarousel a {
   color: #00B7FF;
+}
+#logo{
+  margin-left: 65%;
+}
+#upperhalf{
+  margin-left:56%
+}
+#lowerhalf{
+  margin-left:56%
+}
+#name{
+  margin-left: 65%;
+  border:none;
+}
+#pwd{
+  margin-left: 65%;
+  border:none;
+}
+#username{
+  margin-left:56%
+}
+#password{
+  margin-left:56%
+}
+#login{
+  margin-left: 64%;
+}
+#ptag{
+  margin-left:56%;
+}
+#ptag a{
+  text-decoration: none;
+  color: blue;
+}
+#ptag a:hover{
+  color: #F9BE32;
+}
+input{
+  border: none;
+}
+input:focus{
+  outline: none;
+}
+a{
+  cursor: pointer;
+}
+#error{
+  margin-left: 62%;
 }
