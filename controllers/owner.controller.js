@@ -5,7 +5,7 @@ const Employee = require("../models/employee.model")
 const PasswordHash = require("password-hash")
 const nodemailer = require('nodemailer');
 const Table = require("../models/table.model")
-const Dish=require("../models/dish.model")
+const Dish = require("../models/dish.model")
 exports.signup = async (req, res) => {
     if (req.body.password !== req.body.confirmpassword) {
         //415 : Conflict
@@ -87,17 +87,21 @@ exports.signup = async (req, res) => {
     setTimeout(myFunc, 600000, temp);
 }
 exports.verifymail = async (req, res) => {
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
+    if (req.token.userId != null) {
+        console.log("userid:" + req.token.userId)
+        ownerId = req.token.userId;
+    } else {
+        console.log("ownerid:" + req.token.ownerId)
+        ownerId = req.token.ownerId;
+    }
     var vercode = await Verificationcode.findOne({
-        owneRID: req.token.ownerId
+        owneRID: ownerId
     });
-    if (vercode.verifycode === req.body.verifycode) {
+    if (vercode.verifycode == req.body.verifycode) {
         await Verificationcode.deleteOne({
-            verifycode: vercode.verifycode
+            verifycode: req.body.verifycode
         });
-        await Owner.findByIdAndUpdate(token.ownerId, {
+        await Owner.findByIdAndUpdate(ownerId, {
             "$set": {
                 "verified": true
             }
@@ -110,17 +114,21 @@ exports.verifymail = async (req, res) => {
 }
 exports.viewTables = async (req, res) => {
     //Send the view of tables
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
+    console.log(ownerId);
     var tables = await Table.find({
-        oid: token.ownerId
+        oid: ownerId
     }, {
         tablenumber: 1,
-        tablestatus: 1,
         tableimage: 1,
+        tablestatus: 1,
         _id: 0
     });
+    console.log(tables)
     res.status(200).send({
         tables
     });
@@ -130,12 +138,14 @@ exports.addTable = async (req, res) => {
     //Register the restaurant
     // First check if account exists with this email id
     var ti = "";
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
     var table = await Table.findOne({
         tablenumber: req.body.tablenumber,
-        oid: token.ownerId
+        oid: ownerId
     });
     if (table) {
         // 409 : Conflict
@@ -164,7 +174,7 @@ exports.addTable = async (req, res) => {
     // Create a new owner with the data client has sent
     // Make sure to hash the password
     var table = new Table({
-        oid: token.ownerId,
+        oid: ownerId,
         tablenumber: req.body.tablenumber,
         tablestatus: req.body.tablestatus,
         tableimage: ti
@@ -179,12 +189,14 @@ exports.addTable = async (req, res) => {
 exports.updateTable = async (req, res) => {
     //Update table number and delete table
     var ti = "";
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
     var table = await Table.findOne({
         tablenumber: req.body.tablenumber,
-        oid: token.ownerId
+        oid: ownerId
     });
     if (!table) {
         // 409 : Conflict
@@ -226,13 +238,14 @@ exports.updateTable = async (req, res) => {
 }
 exports.deleteTable = async (req, res) => {
     //Send the view of employees
-
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
     var table = await Table.findOne({
         tablenumber: req.body.tablenumber,
-        oid:token.ownerId
+        oid: ownerId
     });
     if (!table) {
         // 409 : Conflict
@@ -242,7 +255,7 @@ exports.deleteTable = async (req, res) => {
     }
     await Table.deleteOne({
         tablenumber: req.body.tablenumber,
-        oid:token.ownerId
+        oid: ownerId
     });
     res.status(200).send({
         message: "Table deleted succesfully"
@@ -250,20 +263,20 @@ exports.deleteTable = async (req, res) => {
 }
 exports.viewEmployees = async (req, res) => {
     //Send the view of employees
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
     var employees = await Employee.find({
-        bossid: token.ownerId
+        bossid: ownerId
     }, {
-        employeename:1,
-        emailid:1,
-        bossid:0,
-        phonenumber:1,
-        aadharnumber:1,
-        address:1,
-        type:S1,
-        verifiedid:0,
+        employeename: 1,
+        emailid: 1,
+        phonenumber: 1,
+        aadharnumber: 1,
+        address: 1,
+        type: 1,
         _id: 0
     });
     res.status(200).send({
@@ -272,20 +285,30 @@ exports.viewEmployees = async (req, res) => {
 }
 exports.addemployeemailid = async (req, res) => {
     //Send the view of employees
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
     var employee = await Employee.findOne({
         emailid: req.body.emailid,
-        bossid:token.ownerId
+        bossid: ownerId
     });
     if (employee) {
         return res.status(409).send({
             message: "Employee already exists"
         });
     }
+    var employee = await Owner.findOne({
+        emailid: req.body.emailid
+    });
+    if (employee) {
+        return res.status(409).send({
+            message: "The owner cannot be an Employee."
+        });
+    }
     var boss = await Owner.findOne({
-        _id: token.ownerId
+        _id: ownerId
     });
     var r = Math.floor(100000 + Math.random() * 900000);
     var transporter = nodemailer.createTransport({
@@ -311,11 +334,11 @@ exports.addemployeemailid = async (req, res) => {
     });
     var verificatcode = new Verificationcode({
         employeeid: req.body.emailid,
-        owneRID: token.ownerId,
+        owneRID: ownerId,
         verifycode: r
     })
     verificatcode = await verificatcode.save();
-    var temp = token.ownerId;
+    var temp = ownerId;
     async function myFunc(temp) {
         await Verificationcode.deleteOne({
             owneRID: temp
@@ -330,11 +353,13 @@ exports.addemployeemailid = async (req, res) => {
 }
 exports.verifyemployeemailid = async (req, res) => {
     //Add employee to the database
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
     var code = await Verificationcode.findOne({
-        owneRID: token.ownerId,
+        owneRID: ownerId,
         verifycode: req.body.verifycode
     });
     if (code) {
@@ -348,14 +373,14 @@ exports.verifyemployeemailid = async (req, res) => {
             });
         }
         var employee = new Employee({
-            bossid: token.ownerId,
+            bossid: ownerId,
             emailid: code.employeeid,
             verifiedid: true
         });
         employee = await employee.save();
         await Verificationcode.deleteOne({
             verifycode: req.body.verifycode,
-            bossid:token.ownerId
+            bossid: ownerId
         });
         res.status(200).send({
             message: "Employee added succesfully"
@@ -367,13 +392,14 @@ exports.verifyemployeemailid = async (req, res) => {
     }
 }
 exports.addEmployee = async (req, res) => {
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
     //Add employee to the database
-
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
     var employee = await Employee.findOne({
-        bossid: token.ownerId,
+        bossid: ownerId,
         verifiedid: true
     });
     if (!employee) {
@@ -396,12 +422,14 @@ exports.addEmployee = async (req, res) => {
 }
 exports.updateEmployee = async (req, res) => {
     //Update and delete employee
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
     var employee = await Employee.findOne({
-        emailid:req.body.emailid,
-        bossid:token.ownerId
+        emailid: req.body.emailid,
+        bossid: ownerId
     });
     if (!employee) {
         return res.status(453).send({
@@ -423,12 +451,14 @@ exports.updateEmployee = async (req, res) => {
 }
 exports.deleteEmployee = async (req, res) => {
     //Send the view of menu
-    var token = await Token.findOne({
-        ownerId: req.token.ownerId
-    });
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
     var employee = await Employee.findOne({
-        emailid:req.body.emailid,
-        bossid:token.ownerId
+        emailid: req.body.emailid,
+        bossid: ownerId
     });
     if (!employee) {
         // 409 : Conflict
@@ -437,8 +467,8 @@ exports.deleteEmployee = async (req, res) => {
         });
     }
     await Employee.deleteOne({
-        emailid:req.body.emailid,
-        bossid:token.ownerId
+        emailid: req.body.emailid,
+        bossid: ownerId
     });
     res.status(200).send({
         message: "Employee deleted succesfully"
@@ -446,23 +476,122 @@ exports.deleteEmployee = async (req, res) => {
 }
 exports.viewDishes = async (req, res) => {
     //Send the view of menu
+    console.log("..........................." + req.token.userId)
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
+    var dishes = await Dish.find({
+        dishid: ownerId
+    }, {
+        dishimage: 1,
+        dishname: 1,
+        veg: 1,
+        category: 1,
+        price: 1,
+        _id: 0
+    });
+    console.log(dishes)
+    res.status(200).send({
+        dishes
+    });
 }
 exports.addDish = async (req, res) => {
     //Add dish to the database
-    var dish=new Dish({
-        price:800.00
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
+    var dish = await Dish.findOne({
+        dishid: ownerId,
+        dishname: req.body.dishname
+    })
+    if (dish) {
+        // 409 : Conflict
+        return res.status(409).send({
+            message: "Dish already exists"
+        });
+    }
+    var dish = new Dish({
+        dishid: ownerId,
+        dishname: req.body.dishname,
+        dishimage: req.body.dishimage,
+        price: req.body.price,
+        category: req.body.category,
+        vegnonveg: req.body.vegnonveg
     });
-    console.log(dish.price);
+    dish = await dish.save();
+    res.status(200).send({
+        message: "Dish added succesfully"
+    });
 }
 exports.updateDish = async (req, res) => {
     //Update menu and delete dish
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
+    var dish = await Dish.findOne({
+        dishname: req.body.dishname,
+        dishid: ownerId
+    });
+    if (!dish) {
+        // 409 : Conflict
+        return res.status(453).send({
+            message: "Dish doesn't exist!"
+        });
+    }
+    if(req.body.newdishname==""){
+        req.body.newdishname=dish.dishname;
+    }
+    if(req.body.newprice==0){
+        req.body.newprice=dish.price
+    }
+    if(req.body.newcategory=="none"){
+        req.body.newcategory=dish.category
+    }
+    if(req.body.newvegnonveg=="none"){
+        req.body.newvegnonveg=dish.vegnonveg;
+    }
+    await Dish.findByIdAndUpdate(dish._id, {
+        "$set": {
+            "dishid": ownerId,
+            "dishname": req.body.newdishname,
+            "dishimage": req.body.newdishimage,
+            "price": req.body.newprice,
+            "category": req.body.newcategory,
+            "vegnonveg": req.body.newvegnonveg
+        }
+    });
+    res.status(200).send({
+        message: "Table updated succesfully"
+    });
 }
 exports.deleteDish = async (req, res) => {
     //Update menu and delete dish
-}
-exports.viewOrders = async (req, res) => {
-    //View orders
-}
-exports.viewBills = async (req, res) => {
-    //View bills
+    if (req.token.userId != null) {
+        ownerId = req.token.userId;
+    } else {
+        ownerId = req.token.ownerId;
+    }
+    var dish = await Dish.findOne({
+        dishname: req.body.dishname,
+        dishid: ownerId
+    });
+    if (!dish) {
+        // 409 : Conflict
+        return res.status(453).send({
+            message: "Dish doesn't exist!"
+        });
+    }
+    await Dish.deleteOne({
+        dishname: req.body.dishname,
+        dishid: ownerId
+    });
+    res.status(200).send({
+        message: "Table deleted succesfully"
+    });
 }

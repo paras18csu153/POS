@@ -1,11 +1,12 @@
 const Order = require("../models/order.model");
-const table = require("../models/table.model");
-const menu = require("../models/menu.model");
-const waiter =require("../models/waiter.model")
+const Table = require("../models/table.model");
+const Dish = require("../models/dish.model");
+const Waiter =require("../models/waiter.model")
+const Bill =require("../models/bill.model")
 
 exports.viewTables = async (req, res) => {
   //Send the view of tables
-  var tables = await table.find()
+  var tables = await Table.find()
   res.status(200).send(tables)
 }
 exports.updateStatus = async (req, res) => {
@@ -13,12 +14,12 @@ exports.updateStatus = async (req, res) => {
 }
 exports.viewMenu = async (req, res) => {
   //Send the view of menu
-  var menus = await menu.find()
-  res.status(200).send(menus)
+  var dishes = await Dish.find()
+  res.status(200).send(dishes)
 }
 exports.viewOrder = async (req, res) => {
   //Send the view of order
-  var orders = await order.find()
+  var orders = await Order.find()
   res.status(200).send(orders)
 }
 // exports.takeOrder = async (req, res) => {
@@ -32,39 +33,53 @@ exports.viewOrder = async (req, res) => {
 
 exports.takeOrder = async (req, res) => {
   //Take order
-  var order = new Order({
-    orderNo: req.body.orderNoId,
-    dishname: req.body.dishname,
-    category: req.body.category,
-    price: req.body.price,
+  waiterid=req.token.waiterid;
+  var order=await Order.findOne({
+    tablenumber:req.body.tablenumber,
+    waiterid:waiterid
   })
-
-  order = await order.save()
-
-  await waiter.findByIdAndUpdate(req.token.order, {
-    "$push": {
-      "orders": order._id
-    }
-  }, { "new": true, "upsert": true })
-  res.status(200).send({ message: "orders" })
-
-  
-}
-exports.updateOrder = async (req, res) => {
-  //Update Order
-  let order = await Order.findByIdAndUpdate(req.params.id, { dish: req.body.dish })
-  if (!order) {
-    res.status(404).send(`Order with id ${req.params.id} doesn't exist`)
+  if(order){
+      return res.status(200).send({message:"Order exists"});
   }
-
-  res.status(200).send({ message: "Updated" })
-  res.send()
+  var dish=await Dish.findOne({
+      dishname:req.body.dishname
+  })
+  var order = new Order({
+    tablenumber:req.body.tablenumber,
+    dishname: req.body.dishname,
+    price: dish.price,
+    waiterid:waiterid
+  })
+  order = await order.save() 
+  res.status(200).send({ order })
 }
-exports.generateOTP = async (req, res) => {
-  //Generate OTP
+exports.deleteOrder = async (req, res) => {
+  //Update Order
+  waiterid=req.token.waiterid;
+  var order=await Order.findOne({
+      tablenumber:req.body.tablenumber,
+      waiterid:waiterid,
+      dishname:req.body.dishname
+  })
+  if (!order) {
+    res.status(404).send("Order  doesn't exist");
+  }
+  await Order.deleteOne(order._id); 
+  res.status(200).send({ message: "Deleted" })
 }
 exports.generateBill = async (req, res) => {
+    waiterid=req.token.waiterid;
+    var orders=await Order.find({
+        tablenumber:req.body.tablenumber,
+        waiterid:waiterid
+    })
+    var bill= new Bill({
+        waitid:waiterid,
+        tabnumber:tablenumber,
 
+    })
+    await bill.save();
+    res.status(200).send({orders});
 }
 exports.updateCustomerdetails = async (req, res) => {
   //Update Customer Details
